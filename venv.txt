@@ -1,0 +1,15 @@
+crear entorno virtual
+python3 -m venv tutorial-env
+
+Una vez creado el entorno virtual, podrás activarlo.
+
+En Windows, ejecuta:
+tutorial-env\Scripts\activate.bat
+
+En Unix o MacOS, ejecuta:
+source tutorial-env/bin/activate
+
+
+
+
+https://google.github.io/mediapipe/getting_started/python.html
