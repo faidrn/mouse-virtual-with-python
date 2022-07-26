@@ -9,7 +9,13 @@ tutorial-env\Scripts\activate.bat
 En Unix o MacOS, ejecuta:
 source tutorial-env/bin/activate
 
-
+crear entorno virtual en code (windows)
+Comandos:
+Crear carpeta: mkdir nombre_carpeta
+Crear Entorno virtual: py -m venv .\[nombre de la carpeta]\
+Dar permisos varios: Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope Process
+Activar el entorno virtual: Ir a la carpeta SCRIPT y ejecutar el file .\activate
+Ejecutar código: py micodigo.py
 
 
 https://google.github.io/mediapipe/getting_started/python.html

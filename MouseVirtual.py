@@ -63,6 +63,7 @@ while True:
 
                 #-------------------- Hacemos click si la distancia es corta ---------------------------
                 autopy.mouse.click()
+                
 
 
     cv2.imshow("Mouse", frame)
