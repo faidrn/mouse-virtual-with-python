@@ -19,3 +19,7 @@ Ejecutar código: py micodigo.py
 
 
 https://google.github.io/mediapipe/getting_started/python.html
+
+
+juego
+https://www.minijuegos.com/juego/martial-arts-fighter-duel

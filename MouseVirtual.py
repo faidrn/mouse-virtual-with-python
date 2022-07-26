@@ -3,6 +3,7 @@ import cv2
 import numpy as np
 import tracking_hands as sm  #Programa que contiene la deteccion y seguimiento de manos
 import autopy  #Libreria que nos va a permitir manipular el mouse
+import pyautogui # Libreria que nos va a permitir manipular el teclado
 
 #---------------------------------Declaracion de variables---------------------------------------
 anchocam, altocam = 640, 480
@@ -35,7 +36,7 @@ while True:
 
         #----------------- Comprobar que dedos estan arriba --------------------------------
         dedos = detector.dedosarriba() #Contamos con 5 posiciones nos indica si levanta cualquier dedo
-        #print(dedos)
+        # print(dedos)
         cv2.rectangle(frame, (cuadro, cuadro), (anchocam - cuadro, altocam - cuadro), (0, 0, 0), 2)  # Generamos cuadro
         #-----------------Modo movimiento: solo dedo indice-------------------------------------
         if dedos[1]== 1 and dedos[2] == 0:  #Si el indice esta arriba pero el corazon esta abajo
@@ -64,6 +65,20 @@ while True:
                 #-------------------- Hacemos click si la distancia es corta ---------------------------
                 autopy.mouse.click()
                 
+        ### comprobar si esta en modo digitacion ###
+        if dedos[0] == 1: # Si el pulgar esta arriba
+            pyautogui.press("c")
+
+        if dedos[3] == 1: # Si el anular esta arriba
+            pyautogui.press("f")
+
+        if dedos[4] == 1: # Si el meñique esta arriba
+            pyautogui.press("v")
+        
+        # https://recursospython.com/guias-y-manuales/pyautogui/
+        # https://recursospython.com/guias-y-manuales/autopy-toolkit/
+        # https://www.minijuegos.com/juego/martial-arts-fighter-duel?from=lastPlayedGamesHome
+        
 
 
     cv2.imshow("Mouse", frame)
