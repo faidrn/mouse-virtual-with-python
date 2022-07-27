@@ -5,7 +5,6 @@ import mediapipe as mp
 import time
 
 
-# https://www.youtube.com/watch?v=YLrjXRTDq6I&ab_channel=AprendeeIngenia
 # Crear clase
 class detectormanos():
 	# Constructor de la clase
