@@ -78,7 +78,7 @@ while True:
         if dedos[1] == 1 and dedos[2] == 1:  # Si el indice esta arriba y el corazon tambien
             # --------------->Modo click: encontrar la distancia entre ellos-------------------------
             longitud, frame, linea = detector.distancia(8,12,frame) #Nos entrega la distancia entre el punto 8 y 12
-            print(longitud)
+            #print(longitud)
             if longitud < 30:
                 cv2.circle(frame, (linea[4],linea[5]), 10, (0,255,0), cv2.FILLED)
 
@@ -96,11 +96,7 @@ while True:
         # if dedos[4] == 1: # Si el meñique esta arriba
         #     pyautogui.press("v")
         
-        # https://www.youtube.com/watch?v=YLrjXRTDq6I&ab_channel=AprendeeIngenia
-        # https://recursospython.com/guias-y-manuales/pyautogui/
-        # https://recursospython.com/guias-y-manuales/autopy-toolkit/
-        # https://www.minijuegos.com/juego/martial-arts-fighter-duel?from=lastPlayedGamesHome
-        # https://www.youtube.com/watch?v=ipHKQVtwRas&ab_channel=OMES
+        
         
 
 

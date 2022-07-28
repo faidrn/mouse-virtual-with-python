@@ -23,3 +23,13 @@ https://google.github.io/mediapipe/getting_started/python.html
 
 juego
 https://www.minijuegos.com/juego/martial-arts-fighter-duel
+
+urls
+# https://www.youtube.com/watch?v=YLrjXRTDq6I&ab_channel=AprendeeIngenia
+        # https://recursospython.com/guias-y-manuales/pyautogui/
+        # https://recursospython.com/guias-y-manuales/autopy-toolkit/
+        # https://www.minijuegos.com/juego/martial-arts-fighter-duel?from=lastPlayedGamesHome
+        # https://www.youtube.com/watch?v=ipHKQVtwRas&ab_channel=OMES
+        
+holistic
+https://www.youtube.com/watch?v=djoI_s-qPJ0&ab_channel=OMES
