@@ -28,8 +28,6 @@ class detectormanos():
 		imgColor = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
 		self.resultados = self.manos.process(imgColor)
 
-		print(self.resultados.multi_handedness.classification[label])
-
 		if self.resultados.multi_hand_landmarks:
 			for mano in self.resultados.multi_hand_landmarks:
 				if dibujar:

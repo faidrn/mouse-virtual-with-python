@@ -3,7 +3,6 @@ import cv2 # opencv
 import numpy as np
 import tracking_hands as sm  #Programa que contiene la deteccion y seguimiento de manos
 import autopy  #Libreria que nos va a permitir manipular el mouse
-import pyautogui # Libreria que nos va a permitir manipular el teclado
 
 
 #---------------------------------Declaracion de variables---------------------------------------
@@ -35,10 +34,6 @@ while True:
         x2, y2 = lista[12][1:]                 #Extraemos las coordenadas del dedo corazon
         #print(x1,y1,x2,y2)
 
-        # left_hand
-        # xl1, yl1 = lista[8][1:]                  #Extraemos las coordenadas del dedo indice
-        #xl2, yl2 = lista[12][1:]                 #Extraemos las coordenadas del dedo corazon
-
         #----------------- Comprobar que dedos estan arriba --------------------------------
         dedos = detector.dedosarriba() #Contamos con 5 posiciones nos indica si levanta cualquier dedo
         # print(dedos)
@@ -59,21 +54,6 @@ while True:
             cv2.circle(frame, (x1,y1), 10, (0,0,0), cv2.FILLED)
             pubix, pubiy = cubix, cubiy
 
-        ###################
-        # if dedos[1] == 1 and dedos[1] == 0: #Si el indice derecho esta arriba pero el indice izquierdo esta abajo
-        #      #-----------------> Modo movimiento conversion a las pixeles de mi pantalla-------------
-        #     x3 = np.interp(x1, (cuadro,anchocam-cuadro), (0,anchopanta))
-        #     y3 = np.interp(y1, (cuadro, altocam-cuadro), (0, altopanta))
-
-        #     #------------------------------- Suavizado los valores ----------------------------------
-        #     cubix = pubix + (x3 - pubix) / sua #Ubicacion actual = ubi anterior + x3 - Pa dividida el valor suavizado
-        #     cubiy = pubiy + (y3 - pubiy) / sua
-
-        #     #-------------------------------- Mover el Mouse ---------------------------------------
-        #     autopy.mouse.move(anchopanta - cubix,cubiy) #Enviamos las coordenadas al Mouse
-        #     cv2.circle(frame, (x1,y1), 10, (0,0,0), cv2.FILLED)
-        #     pubix, pubiy = cubix, cubiy
-        ###################
         #----------------------------- Comprobar si esta en modo click -------------------------
         if dedos[1] == 1 and dedos[2] == 1:  # Si el indice esta arriba y el corazon tambien
             # --------------->Modo click: encontrar la distancia entre ellos-------------------------
@@ -85,19 +65,6 @@ while True:
                 #-------------------- Hacemos click si la distancia es corta ---------------------------
                 autopy.mouse.click()
                 
-
-        ### comprobar si esta en modo digitacion ###
-        # if dedos[0] == 1: # Si el pulgar esta arriba
-        #     pyautogui.press("c")
-
-        # if dedos[3] == 1: # Si el anular esta arriba
-        #     pyautogui.press("f")
-
-        # if dedos[4] == 1: # Si el meñique esta arriba
-        #     pyautogui.press("v")
-        
-        
-        
 
 
     cv2.imshow("Mouse", frame)
