@@ -61,7 +61,9 @@ class poseTracking():
     
 def run():
     # Read the web cam
-    cap = cv2.VideoCapture(0)
+    # 0 = Camara del pc
+    # 1 = camara externa
+    cap = cv2.VideoCapture(1)
     detector = poseTracking()
 
     # Realizamos la deteccion de manos
@@ -92,3 +94,4 @@ def run():
 
 if __name__ == '__main__':
 	run()
+    # https://noemioocc.github.io/posts/Mostrar-la-webCam-o-reproducir-un-video-openCV-python/
