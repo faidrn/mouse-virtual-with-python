@@ -1,6 +1,6 @@
 # frameorks 
-from cProfile import run
-from unittest import result
+# from cProfile import run
+# from unittest import result
 import cv2 # opencv
 import mediapipe as mp
 
@@ -15,6 +15,9 @@ class poseTracking():
 		# Objets to detect and drawing the pose
         self.mp_drawing = mp.solutions.drawing_utils
         self.mp_holistic = mp.solutions.holistic
+        # self.extremities = [muñeca mano izquierda, right wrist, left foot index, right foot index]
+        self.extremities = [15, 16, 31, 32]
+
 
 
     # Method to detect the pose
@@ -58,39 +61,39 @@ class poseTracking():
             self.mp_drawing.DrawingSpec(color = (255, 255, 255), thickness = 2))
 
     
-def run():
-    # Read the web cam
-    # 0 = Camara del pc
-    # 1 = camara externa
-    cap = cv2.VideoCapture(1)
-    detector = poseTracking()
+# def run():
+#     # Read the web cam
+#     # 0 = Camara del pc
+#     # 1 = camara externa
+#     cap = cv2.VideoCapture(1)
+#     detector = poseTracking()
 
-    # Realizamos la deteccion de manos
-	# leer video de entrada
-    while True:
-        ret, frame = cap.read()
-        if ret == False:
-            break
+#     # Realizamos la deteccion de manos
+# 	# leer video de entrada
+#     while True:
+#         ret, frame = cap.read()
+#         if ret == False:
+#             break
                 
-        # Deteccion
-        results = detector.detect_pose(frame)
+#         # Deteccion
+#         results = detector.detect_pose(frame)
             
-        # visualizar los landmarks del cuerpo en general
-        detector.get_landmarks_face(frame, results)
-        detector.get_landmarks_left_hand(frame, results)
-        detector.get_landmarks_right_hand(frame, results)
-        detector.get_landmarks_pose(frame, results)
+#         # visualizar los landmarks del cuerpo en general
+#         detector.get_landmarks_face(frame, results)
+#         detector.get_landmarks_left_hand(frame, results)
+#         detector.get_landmarks_right_hand(frame, results)
+#         detector.get_landmarks_pose(frame, results)
         
 
-        cv2.imshow("Frame", frame)
-        if cv2.waitKey(1) & 0xFF == 27:
-            break
+#         cv2.imshow("Frame", frame)
+#         if cv2.waitKey(1) & 0xFF == 27:
+#             break
         
-    cap.release()
-    cv2.destroyAllWindows()
+#     cap.release()
+#     cv2.destroyAllWindows()
 
 
 
-if __name__ == '__main__':
-	run()
-    # https://noemioocc.github.io/posts/Mostrar-la-webCam-o-reproducir-un-video-openCV-python/
+# if __name__ == '__main__':
+# 	run()
+#     # https://noemioocc.github.io/posts/Mostrar-la-webCam-o-reproducir-un-video-openCV-python/
