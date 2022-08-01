@@ -33,3 +33,6 @@ urls
         
 holistic
 https://www.youtube.com/watch?v=djoI_s-qPJ0&ab_channel=OMES
+
+
+version de python 3.8.10
