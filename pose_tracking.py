@@ -3,7 +3,6 @@ from cProfile import run
 from unittest import result
 import cv2 # opencv
 import mediapipe as mp
-import pyautogui # framework to use the keyboard
 
 
 class poseTracking():
