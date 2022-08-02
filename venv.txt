@@ -36,3 +36,8 @@ https://www.youtube.com/watch?v=djoI_s-qPJ0&ab_channel=OMES
 
 
 version de python 3.8.10
+
+
+
+https://www.youtube.com/watch?v=ndKVMiJKNTA&ab_channel=AugmentedStartups
+https://github.com/gursi26/Pose2Play
