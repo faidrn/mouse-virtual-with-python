@@ -26,15 +26,17 @@ class virtualController():
 
 
     def get_face(self, frame):
-        self.detector.get_landmarks_face(frame, self.results)
-        # Get positions of the face to convert to pixels
-        self.list_position_face = []
-        if self.results.face_landmarks:
-            face = self.results.face_landmarks.landmark
-            self.list_position_face, bbox_face = self.get_positions(frame, face)
+        # self.detector.get_landmarks_face(frame, self.results)
+        # # Get positions of the face to convert to pixels
+        # self.list_position_face = [] 
+        # if self.results.face_landmarks:
+        #     face = self.results.face_landmarks.landmark
+        #     self.list_position_face, bbox_face = self.get_positions(frame, face)
 
-        # if len(self.list_position_face) != 0:
-        #     self.x_face, self.y_face = self.list_position_face[0][1:]                  # Get the coordinates of the face, 0 = nose
+        # New code
+        # # if len(self.list_position_face) != 0:
+        # #     self.x_face, self.y_face = self.list_position_face[0][1:]                  # Get the coordinates of the face, 0 = nose
+        
         
 
 
@@ -77,7 +79,7 @@ class virtualController():
         pass
 
 
-    def get_positions(self, frame, body_part):
+    def get_positions(self, frame, body_part, dibujar = True):
         x_list = []
         y_list = []
         bbox = []
@@ -89,10 +91,14 @@ class virtualController():
             x_list.append(coordinate_x)
             y_list.append(coordinate_y)
             list_positions.append([id, coordinate_x, coordinate_y])
+            if dibujar:
+                cv2.circle(frame, (cx, cy), 5, (0, 0, 0), cv2.FILLED) # Dibujamos un circulo
 
         xMin, xMax = min(x_list), max(x_list)
         yMin, yMax = min(y_list), max(y_list)
         bbox = xMin, yMin, xMax, yMax
+        if dibujar:
+            cv2.rectangle(frame, (xMin - 20, yMin - 20), (xMax + 20, yMax + 20), (0, 255, 0), 2)
 
         return list_positions, bbox
 
