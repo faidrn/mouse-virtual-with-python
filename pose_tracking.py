@@ -1,4 +1,4 @@
-# frameorks 
+# frameworks 
 # from cProfile import run
 # from unittest import result
 import cv2 # opencv
@@ -17,7 +17,7 @@ class poseTracking():
         self.mp_drawing = mp.solutions.drawing_utils
         self.mp_holistic = mp.solutions.holistic
         # self.extremities = [muñeca mano izquierda, right wrist, left foot index, right foot index]
-        # self.extremities = [15, 16, 31, 32]
+        self.controller = [0, 15, 16, 27, 28]
 
 
 
@@ -70,7 +70,7 @@ class poseTracking():
         y_list = []
         list_coordinates = []
 
-        for idx, file in enumerate(frame):
+        for id, file in enumerate(frame):
             height, width, c = frame.shape # Extraemos las dimensiones de los fps
             
             if not results.pose_landmarks:
@@ -80,6 +80,7 @@ class poseTracking():
             #     f'{results.pose_landmarks.landmark[self.mp_holistic.PoseLandmark.NOSE].x * width}, '
             #     f'{results.pose_landmarks.landmark[self.mp_holistic.PoseLandmark.NOSE].y * height})'
             # )
+            # coordinate_x, coordinate_y = self.get_nose_coordinates(results, height, width)
             coordinate_x = int(results.pose_landmarks.landmark[self.mp_holistic.PoseLandmark.NOSE].x * width)
             coordinate_y = int(results.pose_landmarks.landmark[self.mp_holistic.PoseLandmark.NOSE].y * height) # Convertimos la informacion en pixeles
             x_list.append(coordinate_x)
@@ -91,21 +92,21 @@ class poseTracking():
         return list_coordinates
 
 
-    def get_hands_coordinates(self, frame, results, hand, dibujar = True):
+    def get_right_hand_coordinates(self, frame, results, dibujar = True):
         x_list = []
         y_list = []
         list_coordinates = []
 
-        for idx, file in enumerate(frame):
+        for id, file in enumerate(frame):
             height, width, c = frame.shape # Extraemos las dimensiones de los fps
             
             if not results.pose_landmarks:
                 continue
-            print(
-                f'Wrist coordinates: ('
-                f'{results.pose_landmarks.landmark[self.mp_holistic.PoseLandmark.RIGHT_WRIST].x * width}, '
-                f'{results.pose_landmarks.landmark[self.mp_holistic.PoseLandmark.RIGHT_WRIST].y * height})'
-            )
+            # print(
+            #     f'Right Wrist coordinates: ('
+            #     f'{results.pose_landmarks.landmark[self.mp_holistic.PoseLandmark.RIGHT_WRIST].x * width}, '
+            #     f'{results.pose_landmarks.landmark[self.mp_holistic.PoseLandmark.RIGHT_WRIST].y * height})'
+            # )
             coordinate_x = int(results.pose_landmarks.landmark[self.mp_holistic.PoseLandmark.RIGHT_WRIST].x * width)
             coordinate_y = int(results.pose_landmarks.landmark[self.mp_holistic.PoseLandmark.RIGHT_WRIST].y * height) # Convertimos la informacion en pixeles
             x_list.append(coordinate_x)
@@ -115,6 +116,91 @@ class poseTracking():
                 cv2.circle(frame, (coordinate_x, coordinate_y), 5, (0, 0, 0), cv2.FILLED) # Dibujamos un circulo
 
         return list_coordinates
+        
+
+    def get_left_hand_coordinates(self, frame, results, dibujar = True):
+        x_list = []
+        y_list = []
+        list_coordinates = []
+
+        for id, file in enumerate(frame):
+            height, width, c = frame.shape # Extraemos las dimensiones de los fps
+            
+            if not results.pose_landmarks:
+                continue
+            # print(
+            #     f'Left Wrist coordinates: ('
+            #     f'{results.pose_landmarks.landmark[self.mp_holistic.PoseLandmark.LEFT_WRIST].x * width}, '
+            #     f'{results.pose_landmarks.landmark[self.mp_holistic.PoseLandmark.LEFT_WRIST].y * height})'
+            # )
+            coordinate_x = int(results.pose_landmarks.landmark[self.mp_holistic.PoseLandmark.LEFT_WRIST].x * width)
+            coordinate_y = int(results.pose_landmarks.landmark[self.mp_holistic.PoseLandmark.LEFT_WRIST].y * height) # Convertimos la informacion en pixeles
+            x_list.append(coordinate_x)
+            y_list.append(coordinate_y)
+            list_coordinates.append([id, coordinate_x, coordinate_y])
+            if dibujar:
+                cv2.circle(frame, (coordinate_x, coordinate_y), 5, (0, 0, 0), cv2.FILLED) # Dibujamos un circulo
+
+        return list_coordinates
+        
+
+    def get_right_foot_coordinates(self, frame, results, dibujar = True):
+        x_list = []
+        y_list = []
+        list_coordinates = []
+
+        for id, file in enumerate(frame):
+            height, width, c = frame.shape # Extraemos las dimensiones de los fps
+            
+            if not results.pose_landmarks:
+                continue
+            # print(
+            #     f'Right ankle coordinates: ('
+            #     f'{results.pose_landmarks.landmark[self.mp_holistic.PoseLandmark.RIGHT_ANKLE].x * width}, '
+            #     f'{results.pose_landmarks.landmark[self.mp_holistic.PoseLandmark.RIGHT_ANKLE].y * height})'
+            # )
+            coordinate_x = int(results.pose_landmarks.landmark[self.mp_holistic.PoseLandmark.RIGHT_ANKLE].x * width)
+            coordinate_y = int(results.pose_landmarks.landmark[self.mp_holistic.PoseLandmark.RIGHT_ANKLE].y * height) # Convertimos la informacion en pixeles
+            x_list.append(coordinate_x)
+            y_list.append(coordinate_y)
+            list_coordinates.append([id, coordinate_x, coordinate_y])
+            if dibujar:
+                cv2.circle(frame, (coordinate_x, coordinate_y), 5, (0, 0, 0), cv2.FILLED) # Dibujamos un circulo
+
+        return list_coordinates
+
+
+    def get_left_foot_coordinates(self, frame, results, dibujar = True):
+        x_list = []
+        y_list = []
+        list_coordinates = []
+
+        for id, file in enumerate(frame):
+            height, width, c = frame.shape # Extraemos las dimensiones de los fps
+            
+            if not results.pose_landmarks:
+                continue
+            # print(
+            #     f'Left ankle coordinates: ('
+            #     f'{results.pose_landmarks.landmark[self.mp_holistic.PoseLandmark.LEFT_ANKLE].x * width}, '
+            #     f'{results.pose_landmarks.landmark[self.mp_holistic.PoseLandmark.LEFT_ANKLE].y * height})'
+            # )
+            coordinate_x = int(results.pose_landmarks.landmark[self.mp_holistic.PoseLandmark.LEFT_ANKLE].x * width)
+            coordinate_y = int(results.pose_landmarks.landmark[self.mp_holistic.PoseLandmark.LEFT_ANKLE].y * height) # Convertimos la informacion en pixeles
+            x_list.append(coordinate_x)
+            y_list.append(coordinate_y)
+            list_coordinates.append([id, coordinate_x, coordinate_y])
+            if dibujar:
+                cv2.circle(frame, (coordinate_x, coordinate_y), 5, (0, 0, 0), cv2.FILLED) # Dibujamos un circulo
+
+        return list_coordinates
+
+
+    def get_nose_coordinates(self, results, height, width):
+        coordinate_x = int(results.pose_landmarks.landmark[self.mp_holistic.PoseLandmark.NOSE].x * width)
+        coordinate_y = int(results.pose_landmarks.landmark[self.mp_holistic.PoseLandmark.NOSE].y * height) # Convertimos la informacion en pixeles
+
+        return coordinate_x, coordinate_y
 
 
 def run():
@@ -140,7 +226,10 @@ def run():
         # detector.get_landmarks_face(frame, results)
         detector.get_landmarks_left_hand(frame, results)
         detector.get_landmarks_right_hand(frame, results)
-        detector.get_hands_coordinates(frame, results, 0)
+        detector.get_right_hand_coordinates(frame, results)
+        detector.get_left_hand_coordinates(frame, results)
+        detector.get_right_foot_coordinates(frame, results)
+        detector.get_left_foot_coordinates(frame, results)
         
         
 

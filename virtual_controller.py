@@ -1,7 +1,7 @@
-# frameorks 
+# frameworks 
 # from cProfile import run
 # from unittest import result
-from re import A
+from pickletools import ArgumentDescriptor
 import cv2 # opencv
 import mediapipe as mp
 import pyautogui # framework to use the keyboard
@@ -25,83 +25,46 @@ class virtualController():
         self.results = self.detector.detect_pose(frame)
 
 
-    def get_face(self, frame):
+    def drawing_pose(self, frame):
+        # Drawing the landmarks of the pose
+        self.detector.get_landmarks_pose(frame, self.results)
+        # Face
         # self.detector.get_landmarks_face(frame, self.results)
-        # # Get positions of the face to convert to pixels
-        # self.list_position_face = [] 
-        # if self.results.face_landmarks:
-        #     face = self.results.face_landmarks.landmark
-        #     self.list_position_face, bbox_face = self.get_positions(frame, face)
-
-        # New code
-        # # if len(self.list_position_face) != 0:
-        # #     self.x_face, self.y_face = self.list_position_face[0][1:]                  # Get the coordinates of the face, 0 = nose
-        
-        
-
-
-    def right_hand(self, frame):
         # Drawing the right hand
         self.detector.get_landmarks_right_hand(frame, self.results)
-        # list_positions, bbox = self.get_position_right_hand(frame)
-        # print(f'lista: {list_positions} - bbox: {bbox}')
-
-        # Get positions of the hand to convert to pixels
-        self.list_position_right_hand = []
-        self.x_right_hand = 0
-        # self.results.right_hand_landmarks => get the axis x, y and z
-        if self.results.right_hand_landmarks:
-            right_hand = self.results.right_hand_landmarks.landmark
-            self.list_position_right_hand, bbox_right_hand = self.get_positions(frame, right_hand)
-
-        if len(self.list_position_right_hand) != 0:
-            self.x_right_hand, self.y_right_hand = self.list_position_right_hand[16][1:]                  # Get the coordinates of the right hand, 16 = right wrist
-
-        if self.x_right_hand > 0:
-            pyautogui.press("f")
-
-
-
-    def left_hand(self, frame):
         # Drawing the left hand
         self.detector.get_landmarks_left_hand(frame, self.results)
 
 
-    def drawing_pose(self, frame):
-        self.detector.get_landmarks_pose(frame, self.results)
+    def get_face_position(self, frame):
+        self.list_position_face = self.detector.get_pose_coordinates(frame, self.results)
+        # print(self.list_position_face)
+
+
+    def get_right_hand_position(self, frame):
+        self.list_position_right_hand = self.detector.get_right_hand_coordinates(frame, self.results)
+
+
+    def get_left_hand_position(self, frame):
+        self.list_position_left_hand = self.detector.get_left_hand_coordinates(frame, self.results)
 
     
-    def right_foot(self):
-        pass
+    def get_right_foot_position(self, frame):
+        self.list_position_right_foot = self.detector.get_right_foot_coordinates(frame, self.results)
 
 
-    def left_foot(self):
-        pass
+
+    def get_left_foot_position(self, frame):
+        self.list_position_left_foot = self.detector.get_left_foot_coordinates(frame, self.results)
 
 
-    def get_positions(self, frame, body_part, dibujar = True):
-        x_list = []
-        y_list = []
-        bbox = []
-        list_positions = []
-
-        for id, lm in enumerate(body_part):
-            height, width, c = frame.shape # We extract the dimensions of the fps
-            coordinate_x, coordinate_y = int(lm.x * width), int(lm.y * height) # We convert the information into pixels
-            x_list.append(coordinate_x)
-            y_list.append(coordinate_y)
-            list_positions.append([id, coordinate_x, coordinate_y])
-            if dibujar:
-                cv2.circle(frame, (cx, cy), 5, (0, 0, 0), cv2.FILLED) # Dibujamos un circulo
-
-        xMin, xMax = min(x_list), max(x_list)
-        yMin, yMax = min(y_list), max(y_list)
-        bbox = xMin, yMin, xMax, yMax
-        if dibujar:
-            cv2.rectangle(frame, (xMin - 20, yMin - 20), (xMax + 20, yMax + 20), (0, 255, 0), 2)
-
-        return list_positions, bbox
-
+    # def stop_position(self, face_x, face_y, right_hand_x, right_hand_y, left_hand_x, left_hand_y):
+    def stop_position(self, face_x, face_y, right_hand_x, right_hand_y, left_hand_x, left_hand_y, right_foot_x, right_foot_y):
+        print(f'face: {face_x}, {face_y} - rh: {right_hand_x}, {right_hand_y}')
+        # Si posicion actual mano es mayor a la anterior
+        #     agrego 1, lo q indica q hubo movimiento
+        # Si no
+        #     agrego 0, no hubo movimiento
 
     # def get_distances(self, point_face, point_right_hand, point_left_hand):
     #     x_face, y_face = self.list_position_face[point_face][1:]
@@ -134,12 +97,28 @@ def run():
                 
         # Detection
         virtual_controller_object.get_pose(frame) # Go first always
-        virtual_controller_object.get_face(frame)
         virtual_controller_object.drawing_pose(frame)
-        virtual_controller_object.right_hand(frame)
+
+        virtual_controller_object.get_face_position(frame)
+        virtual_controller_object.get_right_hand_position(frame)
+        virtual_controller_object.get_left_hand_position(frame)
+        virtual_controller_object.get_right_foot_position(frame)
+        virtual_controller_object.get_left_foot_position(frame)
         # virtual_controller_object.play_game(frame)
          
-        
+        # Get the positions of the nose, hands and feet
+        if len(virtual_controller_object.list_position_face) != 0:
+            face_x, face_y = virtual_controller_object.list_position_face[0][1:]
+            right_hand_x, right_hand_y = virtual_controller_object.list_position_right_hand[16][1:]
+            left_hand_x, left_hand_y = virtual_controller_object.list_position_left_hand[15][1:]
+            right_foot_x, right_foot_y = virtual_controller_object.list_position_right_foot[28][1:]
+            left_foot_x, left_foot_y = virtual_controller_object.list_position_left_foot[27][1:]
+            # print(f'x: {left_hand_x} y: {left_hand_y}')
+
+            # Stop position
+            # virtual_controller_object.stop_position(face_x, face_y, right_hand_x, right_hand_y, left_hand_x, left_hand_y, right_foot_x, right_foot_y)
+
+
 
         cv2.imshow("Frame", frame)
         if cv2.waitKey(1) & 0xFF == 27:
