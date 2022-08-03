@@ -3,6 +3,7 @@
 # from unittest import result
 import cv2 # opencv
 import mediapipe as mp
+import math
 
 
 class poseTracking():
@@ -68,7 +69,7 @@ class poseTracking():
     def get_pose_coordinates(self, frame, results, dibujar = True):
         x_list = []
         y_list = []
-        list_coordinates = []
+        self.list_coordinates_nose = []
 
         for id, file in enumerate(frame):
             height, width, c = frame.shape # Extraemos las dimensiones de los fps
@@ -85,17 +86,17 @@ class poseTracking():
             coordinate_y = int(results.pose_landmarks.landmark[self.mp_holistic.PoseLandmark.NOSE].y * height) # Convertimos la informacion en pixeles
             x_list.append(coordinate_x)
             y_list.append(coordinate_y)
-            list_coordinates.append([id, coordinate_x, coordinate_y])
+            self.list_coordinates_nose.append([id, coordinate_x, coordinate_y])
             if dibujar:
                 cv2.circle(frame, (coordinate_x, coordinate_y), 5, (0, 0, 0), cv2.FILLED) # Dibujamos un circulo
 
-        return list_coordinates
+        return self.list_coordinates_nose
 
 
     def get_right_hand_coordinates(self, frame, results, dibujar = True):
         x_list = []
         y_list = []
-        list_coordinates = []
+        self.list_coordinates_right_hand = []
 
         for id, file in enumerate(frame):
             height, width, c = frame.shape # Extraemos las dimensiones de los fps
@@ -111,17 +112,17 @@ class poseTracking():
             coordinate_y = int(results.pose_landmarks.landmark[self.mp_holistic.PoseLandmark.RIGHT_WRIST].y * height) # Convertimos la informacion en pixeles
             x_list.append(coordinate_x)
             y_list.append(coordinate_y)
-            list_coordinates.append([id, coordinate_x, coordinate_y])
+            self.list_coordinates_right_hand.append([id, coordinate_x, coordinate_y])
             if dibujar:
                 cv2.circle(frame, (coordinate_x, coordinate_y), 5, (0, 0, 0), cv2.FILLED) # Dibujamos un circulo
 
-        return list_coordinates
+        return self.list_coordinates_right_hand
         
 
     def get_left_hand_coordinates(self, frame, results, dibujar = True):
         x_list = []
         y_list = []
-        list_coordinates = []
+        self.list_coordinates_left_hand = []
 
         for id, file in enumerate(frame):
             height, width, c = frame.shape # Extraemos las dimensiones de los fps
@@ -137,17 +138,17 @@ class poseTracking():
             coordinate_y = int(results.pose_landmarks.landmark[self.mp_holistic.PoseLandmark.LEFT_WRIST].y * height) # Convertimos la informacion en pixeles
             x_list.append(coordinate_x)
             y_list.append(coordinate_y)
-            list_coordinates.append([id, coordinate_x, coordinate_y])
+            self.list_coordinates_left_hand.append([id, coordinate_x, coordinate_y])
             if dibujar:
                 cv2.circle(frame, (coordinate_x, coordinate_y), 5, (0, 0, 0), cv2.FILLED) # Dibujamos un circulo
 
-        return list_coordinates
+        return self.list_coordinates_left_hand
         
 
     def get_right_foot_coordinates(self, frame, results, dibujar = True):
         x_list = []
         y_list = []
-        list_coordinates = []
+        self.list_coordinates_right_foot = []
 
         for id, file in enumerate(frame):
             height, width, c = frame.shape # Extraemos las dimensiones de los fps
@@ -163,17 +164,17 @@ class poseTracking():
             coordinate_y = int(results.pose_landmarks.landmark[self.mp_holistic.PoseLandmark.RIGHT_ANKLE].y * height) # Convertimos la informacion en pixeles
             x_list.append(coordinate_x)
             y_list.append(coordinate_y)
-            list_coordinates.append([id, coordinate_x, coordinate_y])
+            self.list_coordinates_right_foot.append([id, coordinate_x, coordinate_y])
             if dibujar:
                 cv2.circle(frame, (coordinate_x, coordinate_y), 5, (0, 0, 0), cv2.FILLED) # Dibujamos un circulo
 
-        return list_coordinates
+        return self.list_coordinates_right_foot
 
 
     def get_left_foot_coordinates(self, frame, results, dibujar = True):
         x_list = []
         y_list = []
-        list_coordinates = []
+        self.list_coordinates_left_foot = []
 
         for id, file in enumerate(frame):
             height, width, c = frame.shape # Extraemos las dimensiones de los fps
@@ -189,11 +190,11 @@ class poseTracking():
             coordinate_y = int(results.pose_landmarks.landmark[self.mp_holistic.PoseLandmark.LEFT_ANKLE].y * height) # Convertimos la informacion en pixeles
             x_list.append(coordinate_x)
             y_list.append(coordinate_y)
-            list_coordinates.append([id, coordinate_x, coordinate_y])
+            self.list_coordinates_left_foot.append([id, coordinate_x, coordinate_y])
             if dibujar:
                 cv2.circle(frame, (coordinate_x, coordinate_y), 5, (0, 0, 0), cv2.FILLED) # Dibujamos un circulo
 
-        return list_coordinates
+        return self.list_coordinates_left_foot
 
 
     def get_nose_coordinates(self, results, height, width):
@@ -201,6 +202,64 @@ class poseTracking():
         coordinate_y = int(results.pose_landmarks.landmark[self.mp_holistic.PoseLandmark.NOSE].y * height) # Convertimos la informacion en pixeles
 
         return coordinate_x, coordinate_y
+
+
+    # Funcion para detectar la distancia entre dedos
+    def range_between_nose_and_hands(self, point_nose, point_hand, frame, dibujar = True, r = 15, t = 3):
+    # def range_between_nose_and_hands(self, point_nose, point_right_hand, point_left_hand, frame, dibujar = True, r = 15, t = 3):
+        nose_x, nose_y = self.list_coordinates_nose[point_nose][1:]
+        hand_x, hand_y = self.list_coordinates_left_hand[point_hand][1:]
+        # right_hand_x, right_hand_y = self.list_coordinates_right_hand[point_right_hand][1:]
+        # left_hand_x, left_hand_y = self.list_coordinates_left_hand[point_left_hand][1:]
+        # cx, cy = (nose_x + right_hand_x) // 2, (nose_y + right_hand_y) // 2
+        if dibujar:
+            cv2.line(frame, (nose_x, nose_y), (hand_x, hand_y), (0, 0, 255), t)
+            # cv2.line(frame, (nose_x, nose_y), (right_hand_x, right_hand_y), (0, 0, 255), t)
+            # cv2.line(frame, (nose_x, nose_y), (left_hand_x, left_hand_y), (0, 0, 255), t)
+            cv2.circle(frame, (nose_x, nose_y), r, (0, 0, 255), cv2.FILLED)
+            cv2.circle(frame, (hand_x, hand_y), r, (0, 0, 255), cv2.FILLED)
+            # cv2.circle(frame, (right_hand_x, right_hand_y), r, (0, 0, 255), cv2.FILLED)
+            # cv2.circle(frame, (left_hand_x, left_hand_y), r, (0, 0, 255), cv2.FILLED)
+            # cv2.circle(frame, (cx, cy), r, (0, 0, 255), cv2.FILLED)
+        length = math.hypot(hand_x - nose_x, hand_y - nose_y)
+        # length = math.hypot(right_hand_x - nose_x, right_hand_y - nose_y, left_hand_x - nose_x, left_hand_y - nose_y)
+        # print(length)
+        return length
+
+
+    def get_movements(self):
+    # def get_movements(self, face_x, face_y, right_hand_x, right_hand_y, left_hand_x, left_hand_y, right_foot_x, right_foot_y):
+        # Check if user is not moving
+        # print(f'face: {face_x}, {face_y} - rh: {right_hand_x}, {right_hand_y}')
+        # Si posicion actual mano es mayor a la anterior
+        #     agrego 1, lo q indica q hubo movimiento
+        # Si no
+        #     agrego 0, no hubo 
+        movements = []
+        # print(self.list_coordinates_left_hand)
+        # print(len(self.list_coordinates_left_hand))
+        print(f'{self.list_coordinates_left_hand[len(self.list_coordinates_left_hand) - 1][1]} - {self.list_coordinates_left_hand[0][1]}')
+        if self.list_coordinates_left_hand[self.controller[1]][1] > self.list_coordinates_left_hand[self.controller[1] - 1][1]:
+            movements.append(1)
+        else:
+            movements.append(0)
+
+        if self.list_coordinates_right_hand[self.controller[2]][1] > self.list_coordinates_right_hand[self.controller[2] - 1][1]:
+            movements.append(1)
+        else:
+            movements.append(0)
+        
+        if self.list_coordinates_left_foot[self.controller[3]][1] > self.list_coordinates_left_foot[self.controller[3] - 1][1]:
+            movements.append(1)
+        else:
+            movements.append(0)
+
+        if self.list_coordinates_right_foot[self.controller[4]][1] > self.list_coordinates_right_foot[self.controller[4] - 1][1]:
+            movements.append(1)
+        else:
+            movements.append(0)
+                
+        return movements
 
 
 def run():
@@ -230,6 +289,7 @@ def run():
         detector.get_left_hand_coordinates(frame, results)
         detector.get_right_foot_coordinates(frame, results)
         detector.get_left_foot_coordinates(frame, results)
+        # detector.range_between_nose_and_hands(0, 16, 15, frame)
         
         
 

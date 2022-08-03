@@ -1,13 +1,11 @@
 # frameworks 
 # from cProfile import run
 # from unittest import result
-from pickletools import ArgumentDescriptor
+from operator import length_hint
 import cv2 # opencv
 import mediapipe as mp
 import pyautogui # framework to use the keyboard
 from pose_tracking import poseTracking
-import math
-
 
 
 class virtualController():
@@ -59,12 +57,15 @@ class virtualController():
 
 
     # def stop_position(self, face_x, face_y, right_hand_x, right_hand_y, left_hand_x, left_hand_y):
-    def stop_position(self, face_x, face_y, right_hand_x, right_hand_y, left_hand_x, left_hand_y, right_foot_x, right_foot_y):
-        print(f'face: {face_x}, {face_y} - rh: {right_hand_x}, {right_hand_y}')
-        # Si posicion actual mano es mayor a la anterior
-        #     agrego 1, lo q indica q hubo movimiento
-        # Si no
-        #     agrego 0, no hubo movimiento
+    def is_player_get_moving(self, frame):
+        # Check if player is moving
+        # 0 = lh    1 = rh  2 = lf      3 = rf
+        # movements = self.detector.get_movements()
+        length_left_hand = self.detector.range_between_nose_and_hands(0, 15, frame) #Nos entrega la distancia entre el punto 8 y 12
+        # print(movements)
+        print(length_left_hand)
+
+        # if movements[0]
 
     # def get_distances(self, point_face, point_right_hand, point_left_hand):
     #     x_face, y_face = self.list_position_face[point_face][1:]
@@ -108,16 +109,15 @@ def run():
          
         # Get the positions of the nose, hands and feet
         if len(virtual_controller_object.list_position_face) != 0:
-            face_x, face_y = virtual_controller_object.list_position_face[0][1:]
-            right_hand_x, right_hand_y = virtual_controller_object.list_position_right_hand[16][1:]
-            left_hand_x, left_hand_y = virtual_controller_object.list_position_left_hand[15][1:]
-            right_foot_x, right_foot_y = virtual_controller_object.list_position_right_foot[28][1:]
-            left_foot_x, left_foot_y = virtual_controller_object.list_position_left_foot[27][1:]
+            # face_x, face_y = virtual_controller_object.list_position_face[0][1:]
+            # right_hand_x, right_hand_y = virtual_controller_object.list_position_right_hand[16][1:]
+            # left_hand_x, left_hand_y = virtual_controller_object.list_position_left_hand[15][1:]
+            # right_foot_x, right_foot_y = virtual_controller_object.list_position_right_foot[28][1:]
+            # left_foot_x, left_foot_y = virtual_controller_object.list_position_left_foot[27][1:]
             # print(f'x: {left_hand_x} y: {left_hand_y}')
 
-            # Stop position
-            # virtual_controller_object.stop_position(face_x, face_y, right_hand_x, right_hand_y, left_hand_x, left_hand_y, right_foot_x, right_foot_y)
-
+            # Check if player is moving
+            virtual_controller_object.is_player_get_moving(frame)
 
 
         cv2.imshow("Frame", frame)
