@@ -54,6 +54,7 @@ class MotionDetection():
                     cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
                     cv2.putText(frame, '()'.format('Movimiento'), (x, y - 5), 1, 1.3, (0, 255, 0), 1, cv2.LINE_AA)
                     # aqui llama la alarma
+                    # print(c)
 
             # Show the cam, mask and contourns
             cv2.imshow('Alarma inactiva', frame)
@@ -75,3 +76,5 @@ def run():
 
 if __name__ == '__main__':
     run()
+
+    # https://www.youtube.com/watch?v=0BNQ8tEjq5M&t=453s&ab_channel=AprendeeIngenia

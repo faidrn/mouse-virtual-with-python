@@ -4,6 +4,9 @@
 import cv2 # opencv
 import mediapipe as mp
 import math
+# Pose2Play
+import torch
+from pynput import Controller, Key
 
 
 class poseTracking():
@@ -19,6 +22,10 @@ class poseTracking():
         self.mp_holistic = mp.solutions.holistic
         # self.extremities = [muñeca mano izquierda, right wrist, left foot index, right foot index]
         self.controller = [0, 15, 16, 27, 28]
+
+        # Pose2Play
+        keyboard = Controller()
+        keybinds = {'hook':'e', 'kick':'x', 'special':Key.space, 'crouch':'s'}
 
 
 
@@ -138,11 +145,27 @@ class poseTracking():
             coordinate_y = int(results.pose_landmarks.landmark[self.mp_holistic.PoseLandmark.LEFT_WRIST].y * height) # Convertimos la informacion en pixeles
             x_list.append(coordinate_x)
             y_list.append(coordinate_y)
-            self.list_coordinates_left_hand.append([id, coordinate_x, coordinate_y])
+            # self.list_coordinates_left_hand.append([id, coordinate_x, coordinate_y])
             if dibujar:
                 cv2.circle(frame, (coordinate_x, coordinate_y), 5, (0, 0, 0), cv2.FILLED) # Dibujamos un circulo
 
-        return self.list_coordinates_left_hand
+        # return self.list_coordinates_left_hand
+        # output_list = []
+
+        lms_list = [
+            self.mp_holistic.PoseLandmark.LEFT_WRIST,
+        ]
+
+        if results.pose_landmarks is not None : 
+            for lm in lms_list : 
+                landmark = results.pose_landmarks.landmark[lm]
+                self.list_coordinates_left_hand.append(landmark.x)
+                self.list_coordinates_left_hand.append(landmark.y)
+                self.list_coordinates_left_hand.append(landmark.z)
+            return self.list_coordinates_left_hand
+        else :
+            return False
+
         
 
     def get_right_foot_coordinates(self, frame, results, dibujar = True):
@@ -207,24 +230,28 @@ class poseTracking():
     # Funcion para detectar la distancia entre dedos
     def range_between_nose_and_hands(self, point_nose, point_hand, frame, dibujar = True, r = 15, t = 3):
     # def range_between_nose_and_hands(self, point_nose, point_right_hand, point_left_hand, frame, dibujar = True, r = 15, t = 3):
-        nose_x, nose_y = self.list_coordinates_nose[point_nose][1:]
-        hand_x, hand_y = self.list_coordinates_left_hand[point_hand][1:]
-        # right_hand_x, right_hand_y = self.list_coordinates_right_hand[point_right_hand][1:]
-        # left_hand_x, left_hand_y = self.list_coordinates_left_hand[point_left_hand][1:]
-        # cx, cy = (nose_x + right_hand_x) // 2, (nose_y + right_hand_y) // 2
-        if dibujar:
-            cv2.line(frame, (nose_x, nose_y), (hand_x, hand_y), (0, 0, 255), t)
-            # cv2.line(frame, (nose_x, nose_y), (right_hand_x, right_hand_y), (0, 0, 255), t)
-            # cv2.line(frame, (nose_x, nose_y), (left_hand_x, left_hand_y), (0, 0, 255), t)
-            cv2.circle(frame, (nose_x, nose_y), r, (0, 0, 255), cv2.FILLED)
-            cv2.circle(frame, (hand_x, hand_y), r, (0, 0, 255), cv2.FILLED)
-            # cv2.circle(frame, (right_hand_x, right_hand_y), r, (0, 0, 255), cv2.FILLED)
-            # cv2.circle(frame, (left_hand_x, left_hand_y), r, (0, 0, 255), cv2.FILLED)
-            # cv2.circle(frame, (cx, cy), r, (0, 0, 255), cv2.FILLED)
-        length = math.hypot(hand_x - nose_x, hand_y - nose_y)
-        # length = math.hypot(right_hand_x - nose_x, right_hand_y - nose_y, left_hand_x - nose_x, left_hand_y - nose_y)
-        # print(length)
-        return length
+        if self.list_coordinates_left_hand is None: 
+            return False
+        else:
+            nose_x, nose_y = self.list_coordinates_nose[point_nose][1:]
+            hand_x, hand_y = self.list_coordinates_left_hand[point_hand][1:]
+            # right_hand_x, right_hand_y = self.list_coordinates_right_hand[point_right_hand][1:]
+            # left_hand_x, left_hand_y = self.list_coordinates_left_hand[point_left_hand][1:]
+            # cx, cy = (nose_x + right_hand_x) // 2, (nose_y + right_hand_y) // 2
+            if dibujar:
+                cv2.line(frame, (nose_x, nose_y), (hand_x, hand_y), (0, 0, 255), t)
+                # cv2.line(frame, (nose_x, nose_y), (right_hand_x, right_hand_y), (0, 0, 255), t)
+                # cv2.line(frame, (nose_x, nose_y), (left_hand_x, left_hand_y), (0, 0, 255), t)
+                cv2.circle(frame, (nose_x, nose_y), r, (0, 0, 255), cv2.FILLED)
+                cv2.circle(frame, (hand_x, hand_y), r, (0, 0, 255), cv2.FILLED)
+                # cv2.circle(frame, (right_hand_x, right_hand_y), r, (0, 0, 255), cv2.FILLED)
+                # cv2.circle(frame, (left_hand_x, left_hand_y), r, (0, 0, 255), cv2.FILLED)
+                # cv2.circle(frame, (cx, cy), r, (0, 0, 255), cv2.FILLED)
+            length = math.hypot(hand_x - nose_x, hand_y - nose_y)
+            # length = math.hypot(right_hand_x - nose_x, right_hand_y - nose_y, left_hand_x - nose_x, left_hand_y - nose_y)
+            # print(length)
+            return length
+       
 
 
     def get_movements(self):
@@ -238,7 +265,7 @@ class poseTracking():
         movements = []
         # print(self.list_coordinates_left_hand)
         # print(len(self.list_coordinates_left_hand))
-        print(f'{self.list_coordinates_left_hand[len(self.list_coordinates_left_hand) - 1][1]} - {self.list_coordinates_left_hand[0][1]}')
+        # print(f'{self.list_coordinates_left_hand[len(self.list_coordinates_left_hand) - 1][1]} - {self.list_coordinates_left_hand[0][1]}')
         if self.list_coordinates_left_hand[self.controller[1]][1] > self.list_coordinates_left_hand[self.controller[1] - 1][1]:
             movements.append(1)
         else:
@@ -260,6 +287,29 @@ class poseTracking():
             movements.append(0)
                 
         return movements
+
+
+    def extract_coordinates(self, results):
+        output_list = []
+
+        lms_list = [
+            self.mp_holistic.PoseLandmark.NOSE, 
+            self.mp_holistic.PoseLandmark.LEFT_WRIST,
+            self.mp_holistic.PoseLandmark.RIGHT_WRIST,
+            self.mp_holistic.PoseLandmark.LEFT_ANKLE,
+            self.mp_holistic.PoseLandmark.RIGHT_ANKLE
+        ]
+
+        if results.pose_landmarks is not None: 
+            for lm in lms_list : 
+                landmark = results.pose_landmarks.landmark[lm]
+                output_list.append(landmark.x)
+                output_list.append(landmark.y)
+                output_list.append(landmark.z)
+            return output_list
+        else :
+            return False
+
 
 
 def run():
@@ -286,7 +336,7 @@ def run():
         detector.get_landmarks_left_hand(frame, results)
         detector.get_landmarks_right_hand(frame, results)
         detector.get_right_hand_coordinates(frame, results)
-        detector.get_left_hand_coordinates(frame, results)
+        print(detector.get_left_hand_coordinates(frame, results))
         detector.get_right_foot_coordinates(frame, results)
         detector.get_left_foot_coordinates(frame, results)
         # detector.range_between_nose_and_hands(0, 16, 15, frame)

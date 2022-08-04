@@ -65,6 +65,8 @@ class virtualController():
         # print(movements)
         print(length_left_hand)
 
+        # self.detector.extract_coordinates(self.results)
+
         # if movements[0]
 
     # def get_distances(self, point_face, point_right_hand, point_left_hand):
