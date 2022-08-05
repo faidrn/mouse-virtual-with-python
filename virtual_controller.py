@@ -1,11 +1,12 @@
 # frameworks 
 # from cProfile import run
 # from unittest import result
-from operator import length_hint
 import cv2 # opencv
 import mediapipe as mp
-import pyautogui # framework to use the keyboard
+import pyautogui
+# from torch import det # framework to use the keyboard
 from pose_tracking import poseTracking
+from tracking_hands import detectormanos
 
 
 class virtualController():
@@ -16,6 +17,7 @@ class virtualController():
         self.cap = cv2.VideoCapture(camera)
         
         self.detector = poseTracking()
+        self.detector_hands = detectormanos()
 
 
     def get_pose(self, frame):
@@ -29,9 +31,11 @@ class virtualController():
         # Face
         # self.detector.get_landmarks_face(frame, self.results)
         # Drawing the right hand
-        self.detector.get_landmarks_right_hand(frame, self.results)
+        # self.detector.get_landmarks_right_hand(frame, self.results)
         # Drawing the left hand
-        self.detector.get_landmarks_left_hand(frame, self.results)
+        # self.detector.get_landmarks_left_hand(frame, self.results)
+        # Drawing hands
+        self.detector.get_landmarks_hands(frame)
 
 
     def get_face_position(self, frame):
@@ -45,11 +49,10 @@ class virtualController():
 
     def get_left_hand_position(self, frame):
         self.list_position_left_hand = self.detector.get_left_hand_coordinates(frame, self.results)
-
+        
     
     def get_right_foot_position(self, frame):
         self.list_position_right_foot = self.detector.get_right_foot_coordinates(frame, self.results)
-
 
 
     def get_left_foot_position(self, frame):
@@ -61,13 +64,55 @@ class virtualController():
         # Check if player is moving
         # 0 = lh    1 = rh  2 = lf      3 = rf
         # movements = self.detector.get_movements()
-        length_left_hand = self.detector.range_between_nose_and_hands(0, 15, frame) #Nos entrega la distancia entre el punto 8 y 12
+        # length_left_hand = self.detector.range_between_nose_and_hands(0, 15, frame) #Nos entrega la distancia entre el punto 8 y 12
+        length_left_hand = self.detector.get_left_hand_coordinates(frame, self.results)
+        length_right_hand = self.detector.get_right_hand_coordinates(frame, self.results)
         # print(movements)
-        print(length_left_hand)
+        print(f'left: {length_left_hand} - right: {length_right_hand}')
 
         # self.detector.extract_coordinates(self.results)
 
-        # if movements[0]
+        # lista, bbox = self.detector_hands.encontrarposicion(frame) #Mostramos las posiciones
+        # if len(lista) != 0:
+        #     x1, y1 = lista[8][1:]                  #Extraemos las coordenadas del dedo indice
+        #     x2, y2 = lista[12][1:]                 #Extraemos las coordenadas del dedo corazon
+        #     # print(x1,y1,x2,y2)
+
+        #     #----------------- Comprobar que dedos estan arriba --------------------------------
+        #     dedos = self.detector_hands.dedosarriba() #Contamos con 5 posiciones nos indica si levanta cualquier dedo
+        #     # print(dedos)
+        #     # cv2.rectangle(frame, (cuadro, cuadro), (anchocam - cuadro, altocam - cuadro), (0, 0, 0), 2)  # Generamos cuadro
+
+        #     # Check if hands are moving or not
+             
+        #     #-----------------Modo movimiento: solo dedo indice-------------------------------------
+        #     if dedos[1]== 1 and dedos[2] == 0:  #Si el indice esta arriba pero el corazon esta abajo
+
+        #         #-----------------> Modo movimiento conversion a las pixeles de mi pantalla-------------
+        #         x3 = np.interp(x1, (cuadro,anchocam-cuadro), (0,anchopanta))
+        #         y3 = np.interp(y1, (cuadro, altocam-cuadro), (0, altopanta))
+
+        #         #------------------------------- Suavizado los valores ----------------------------------
+        #         cubix = pubix + (x3 - pubix) / sua #Ubicacion actual = ubi anterior + x3 - Pa dividida el valor suavizado
+        #         cubiy = pubiy + (y3 - pubiy) / sua
+
+        #         #-------------------------------- Mover el Mouse ---------------------------------------
+        #         autopy.mouse.move(anchopanta - cubix,cubiy) #Enviamos las coordenadas al Mouse
+        #         cv2.circle(frame, (x1,y1), 10, (0,0,0), cv2.FILLED)
+        #         pubix, pubiy = cubix, cubiy
+
+        #     #----------------------------- Comprobar si esta en modo click -------------------------
+        #     if dedos[1] == 1 and dedos[2] == 1:  # Si el indice esta arriba y el corazon tambien
+        #         # --------------->Modo click: encontrar la distancia entre ellos-------------------------
+        #         longitud, frame, linea = detector.distancia(8,12,frame) #Nos entrega la distancia entre el punto 8 y 12
+        #         #print(longitud)
+        #         if longitud < 30:
+        #             cv2.circle(frame, (linea[4],linea[5]), 10, (0,255,0), cv2.FILLED)
+
+        #             #-------------------- Hacemos click si la distancia es corta ---------------------------
+        #             autopy.mouse.click()
+                    
+
 
     # def get_distances(self, point_face, point_right_hand, point_left_hand):
     #     x_face, y_face = self.list_position_face[point_face][1:]

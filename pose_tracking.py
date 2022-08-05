@@ -5,8 +5,9 @@ import cv2 # opencv
 import mediapipe as mp
 import math
 # Pose2Play
-import torch
-from pynput import Controller, Key
+# import torch
+# from pynput import Controller, Key
+import tracking_hands as th
 
 
 class poseTracking():
@@ -23,9 +24,11 @@ class poseTracking():
         # self.extremities = [muñeca mano izquierda, right wrist, left foot index, right foot index]
         self.controller = [0, 15, 16, 27, 28]
 
+        self.detector_hands = th.detectormanos(maxManos=2)
+
         # Pose2Play
-        keyboard = Controller()
-        keybinds = {'hook':'e', 'kick':'x', 'special':Key.space, 'crouch':'s'}
+        # keyboard = Controller()
+        # keybinds = {'hook':'e', 'kick':'x', 'special':Key.space, 'crouch':'s'}
 
 
 
@@ -65,6 +68,11 @@ class poseTracking():
             self.mp_drawing.DrawingSpec(color=(0, 255, 0), thickness=2, circle_radius=1), 
             self.mp_drawing.DrawingSpec(color = (57, 143, 0), thickness = 2))
 
+    
+    def get_landmarks_hands(self, frame):
+        self.frame_hands = self.detector_hands.encontrarmanos(frame)  #Encontramos las manos
+
+
 
     # POSE
     def get_landmarks_pose(self, frame, results):
@@ -101,27 +109,28 @@ class poseTracking():
 
 
     def get_right_hand_coordinates(self, frame, results, dibujar = True):
-        x_list = []
-        y_list = []
+        # x_list = []
+        # y_list = []
         self.list_coordinates_right_hand = []
 
-        for id, file in enumerate(frame):
-            height, width, c = frame.shape # Extraemos las dimensiones de los fps
+        # for id, file in enumerate(frame):
+        #     height, width, c = frame.shape # Extraemos las dimensiones de los fps
             
-            if not results.pose_landmarks:
-                continue
-            # print(
-            #     f'Right Wrist coordinates: ('
-            #     f'{results.pose_landmarks.landmark[self.mp_holistic.PoseLandmark.RIGHT_WRIST].x * width}, '
-            #     f'{results.pose_landmarks.landmark[self.mp_holistic.PoseLandmark.RIGHT_WRIST].y * height})'
-            # )
-            coordinate_x = int(results.pose_landmarks.landmark[self.mp_holistic.PoseLandmark.RIGHT_WRIST].x * width)
-            coordinate_y = int(results.pose_landmarks.landmark[self.mp_holistic.PoseLandmark.RIGHT_WRIST].y * height) # Convertimos la informacion en pixeles
-            x_list.append(coordinate_x)
-            y_list.append(coordinate_y)
-            self.list_coordinates_right_hand.append([id, coordinate_x, coordinate_y])
-            if dibujar:
-                cv2.circle(frame, (coordinate_x, coordinate_y), 5, (0, 0, 0), cv2.FILLED) # Dibujamos un circulo
+        #     if not results.pose_landmarks:
+        #         continue
+        #     # print(
+        #     #     f'Right Wrist coordinates: ('
+        #     #     f'{results.pose_landmarks.landmark[self.mp_holistic.PoseLandmark.RIGHT_WRIST].x * width}, '
+        #     #     f'{results.pose_landmarks.landmark[self.mp_holistic.PoseLandmark.RIGHT_WRIST].y * height})'
+        #     # )
+        #     coordinate_x = int(results.pose_landmarks.landmark[self.mp_holistic.PoseLandmark.RIGHT_WRIST].x * width)
+        #     coordinate_y = int(results.pose_landmarks.landmark[self.mp_holistic.PoseLandmark.RIGHT_WRIST].y * height) # Convertimos la informacion en pixeles
+        #     x_list.append(coordinate_x)
+        #     y_list.append(coordinate_y)
+        #     self.list_coordinates_right_hand.append([id, coordinate_x, coordinate_y])
+        #     if dibujar:
+        #         cv2.circle(frame, (coordinate_x, coordinate_y), 5, (0, 0, 0), cv2.FILLED) # Dibujamos un circulo
+        self.list_coordinates_right_hand, _ = self.detector_hands.encontrarposicion(self.frame_hands)
 
         return self.list_coordinates_right_hand
         
@@ -145,26 +154,28 @@ class poseTracking():
             coordinate_y = int(results.pose_landmarks.landmark[self.mp_holistic.PoseLandmark.LEFT_WRIST].y * height) # Convertimos la informacion en pixeles
             x_list.append(coordinate_x)
             y_list.append(coordinate_y)
-            # self.list_coordinates_left_hand.append([id, coordinate_x, coordinate_y])
+            self.list_coordinates_left_hand.append([id, coordinate_x, coordinate_y])
             if dibujar:
                 cv2.circle(frame, (coordinate_x, coordinate_y), 5, (0, 0, 0), cv2.FILLED) # Dibujamos un circulo
 
-        # return self.list_coordinates_left_hand
+        # self.list_coordinates_left_hand, _ = self.detector_hands.encontrarposicion(frame)
+
+        return self.list_coordinates_left_hand
         # output_list = []
 
-        lms_list = [
-            self.mp_holistic.PoseLandmark.LEFT_WRIST,
-        ]
+        # lms_list = [
+        #     self.mp_holistic.PoseLandmark.LEFT_WRIST,
+        # ]
 
-        if results.pose_landmarks is not None : 
-            for lm in lms_list : 
-                landmark = results.pose_landmarks.landmark[lm]
-                self.list_coordinates_left_hand.append(landmark.x)
-                self.list_coordinates_left_hand.append(landmark.y)
-                self.list_coordinates_left_hand.append(landmark.z)
-            return self.list_coordinates_left_hand
-        else :
-            return False
+        # if results.pose_landmarks is not None : 
+        #     for lm in lms_list : 
+        #         landmark = results.pose_landmarks.landmark[lm]
+        #         self.list_coordinates_left_hand.append(landmark.x)
+        #         self.list_coordinates_left_hand.append(landmark.y)
+        #         self.list_coordinates_left_hand.append(landmark.z)
+        #     return self.list_coordinates_left_hand
+        # else :
+        #     return False
 
         
 

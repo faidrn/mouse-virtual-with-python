@@ -32,11 +32,11 @@ while True:
     if len(lista) != 0:
         x1, y1 = lista[8][1:]                  #Extraemos las coordenadas del dedo indice
         x2, y2 = lista[12][1:]                 #Extraemos las coordenadas del dedo corazon
-        #print(x1,y1,x2,y2)
+        # print(x1,y1,x2,y2)
 
         #----------------- Comprobar que dedos estan arriba --------------------------------
         dedos = detector.dedosarriba() #Contamos con 5 posiciones nos indica si levanta cualquier dedo
-        # print(dedos)
+        print(dedos)
         cv2.rectangle(frame, (cuadro, cuadro), (anchocam - cuadro, altocam - cuadro), (0, 0, 0), 2)  # Generamos cuadro
         #-----------------Modo movimiento: solo dedo indice-------------------------------------
         if dedos[1]== 1 and dedos[2] == 0:  #Si el indice esta arriba pero el corazon esta abajo

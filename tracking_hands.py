@@ -31,12 +31,12 @@ class detectormanos():
 		if self.resultados.multi_hand_landmarks:
 			for mano in self.resultados.multi_hand_landmarks:
 				if dibujar:
-					self.dibujo.draw_landmarks(frame, mano, self.mpManos.HAND_CONNECTIONS) # Dibuamos las conexiones de los puntos de la mano
+					self.dibujo.draw_landmarks(frame, mano, self.mpManos.HAND_CONNECTIONS) # Dibujamos las conexiones de los puntos de la mano
 		return frame
 
 
 	# Funcion para encontrar las posicion
-	def encontrarposicion(self, frame, ManoNum = 0, dibujar = True):
+	def encontrarposicion(self, frame, ManoNum =0, dibujar = True):
 		xLista = []
 		yLista = []
 		bbox = []
@@ -58,6 +58,7 @@ class detectormanos():
 			bbox = xMin, yMin, xMax, yMax
 			if dibujar:
 				cv2.rectangle(frame, (xMin - 20, yMin - 20), (xMax + 20, yMax + 20), (0, 255, 0), 2)
+		
 		return self.lista, bbox
 
 
